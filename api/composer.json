@@ -1,0 +1,14 @@
+{
+  "name": "lapor-jalan/api",
+  "authors": [
+	{
+	  "name": "Aditya Purwa",
+	  "email": "adityapurwa@windowslive.com"
+	}
+  ],
+  "require": {
+	"rakit/validation": "^1.1",
+	"ext-json": "*",
+	"ext-pdo": "*"
+  }
+}
