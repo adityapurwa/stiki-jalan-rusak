@@ -1,17 +1,18 @@
 <template>
-	<div class="report-form" :class="{'disabled': disabled}">
-		<div v-if="disabled" class="disabler">
-			<Button type="button" name="login" label="Masuk Dengan Google Untuk Membuat Laporan" color="primary"></Button>
+	<Modal title="Buat Laporan Baru" :visible="visible" @close="$emit('close')">
+		<div class="report-form" :class="{'disabled': disabled}">
+			<div v-if="disabled" class="disabler">
+				<Button type="button" name="login" label="Masuk Dengan Google Untuk Membuat Laporan" color="primary"></Button>
+			</div>
+			<TextField name="address" label="Alamat Jalan" v-model="address"></TextField>
+			<ImageField ld ref="photo" name="photo" label="Foto Kerusakan"></ImageField>
 		</div>
-		<h3>
-			Buat Laporan
-		</h3>
-		<TextField name="address" label="Alamat Jalan" v-model="address"></TextField>
-		<ImageField name="photo" label="Foto Kerusakan"></ImageField>
-		<div class="report-form-buttons">
-			<Button type="submit" name="submit" label="Simpan" color="primary"></Button>
-		</div>
-	</div>
+		<template v-slot:footer>
+			<div class="report-form-buttons">
+				<Button @click="handleSubmit" type="submit" name="submit" label="Simpan" color="primary"></Button>
+			</div>
+		</template>
+	</Modal>
 </template>
 
 <script>
@@ -19,16 +20,46 @@
 	import TextField from '../../components/input/TextField';
 	import ImageField from '../../components/input/ImageField';
 	import Button from '../../components/input/Button';
+	import Modal from '../../components/layout/Modal';
+	import axe from '../../Axios';
 
 	export default {
 		name: 'ReportForm',
 		props: {
-			disabled: Boolean
+			disabled: Boolean,
+			visible: Boolean
 		},
 		data() {
-			return { address: '' }
+			return {
+				address: '',
+				isLoading: false
+			}
+		},
+		methods: {
+			handleSubmit() {
+				this.isLoading = true;
+				const photo = this.$refs.photo.getFiles()[0];
+				const formData = new FormData();
+				formData.append('address', this.address);
+				formData.append('photo', photo);
+				axe.post('create-report.php', formData)
+					.then(res => {
+
+					})
+					.catch(err => {
+						if (err.response.status === 400) {
+							this.errors = err.response.data;
+						} else if (err.response.status === 500) {
+							this.errors = {
+								server: err.response.data.error
+							};
+						}
+					})
+					.finally(() => this.isLoading = false);
+			}
 		},
 		components: {
+			Modal,
 			Button,
 			ImageField,
 			Board,

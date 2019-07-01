@@ -16,6 +16,7 @@
 		</form>
 		<template v-slot:footer>
 			<Button
+				@click="handleSubmit"
 				type="submit" label="Daftar" color="primary" name="submit"
 				:loading="isLoading"
 			></Button>
@@ -61,6 +62,7 @@
 					this.$store.commit('user/setUser', {
 						user: res.data.user
 					});
+					this.$emit('close');
 				}).catch(err => {
 					if (err.response.status === 400) {
 						this.errors = err.response.data;
@@ -81,11 +83,11 @@
 		text-align: right;
 	}
 
-	.register-buttons .button {
+	.register-buttons .circle-button {
 		flex: 1 1 auto;
 	}
 
-	.register-buttons .button:first-child {
+	.register-buttons .circle-button:first-child {
 		margin-right: 8px;
 	}
 </style>

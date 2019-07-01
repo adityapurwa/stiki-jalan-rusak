@@ -29,7 +29,7 @@ if ($validation->fails()) {
 }
 
 try {
-	$stmt = $db->prepare("INSERT INTO users VALUES(UUID(), ?, ?, ?)");
+	$stmt = $db->prepare("INSERT INTO users (id, email, name, password) VALUES(UUID(), ?, ?, ?)");
 	$stmt->bindParam(1, $email);
 	$stmt->bindParam(2, $name);
 	$stmt->bindParam(3, $hashedPassword);

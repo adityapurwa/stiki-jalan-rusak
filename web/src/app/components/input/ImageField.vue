@@ -37,6 +37,9 @@
 					this.thumbnailUrl = reader.result;
 				});
 				reader.readAsDataURL(file);
+			},
+			getFiles(){
+				return this.$refs.inputFile.files;
 			}
 		}
 	}

@@ -11,7 +11,7 @@ $password = $_JSON['password'];
 
 $validator = new Validator();
 $validation = $validator->make(
-	compact('email', 'password', 'name'),
+	compact('email', 'password'),
 	[
 		'email' => 'required|email',
 		'password' => 'required',

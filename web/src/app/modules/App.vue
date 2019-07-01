@@ -7,36 +7,27 @@
 			<UserStatus></UserStatus>
 		</header>
 		<main class="content">
-			<aside class="left-board">
-				<Board>
-					<ReportForm v-if="getLeftBoardContent === 'report'"></ReportForm>
-					<RegisterForm v-if="getLeftBoardContent === 'register'" @back="switchUserMode('login')"></RegisterForm>
-					<LoginForm v-if="getLeftBoardContent === 'login'" @back="switchUserMode('register')"></LoginForm>
-				</Board>
-				<footer>
-					<div class="copyright">
-						Copyright &copy; Aditya Purwa 171116002 - Open Source
-					</div>
-				</footer>
-			</aside>
 			<section class="main-board">
 				<div class="search-box">
-					<TextField name="search" label="Pencarian" :shadow="true" :borderless="true" />
+					<TextField name="search" label="Pencarian" :shadow="true" :borderless="true"></TextField>
 				</div>
 				<div class="report-feeds">
 					<Board>
-						<ul class="report-list">
-							<ReportItem></ReportItem>
-							<ReportItem></ReportItem>
-							<ReportItem></ReportItem>
-							<ReportItem></ReportItem>
-							<ReportItem></ReportItem>
-							<ReportItem></ReportItem>
-						</ul>
+						<header class="report-header">
+							<h4 class="report-header-title">
+								Laporan Terkini
+							</h4>
+							<div class="report-header-buttons">
+								<Button @click="showReportForm" label="Buat Laporan Baru" name="create" color="primary"></Button>
+							</div>
+						</header>
+						<ReportList></ReportList>
 					</Board>
 				</div>
 			</section>
 		</main>
+
+		<ReportForm @close="reportFormVisible = false" :visible="reportFormVisible" v-if="getLeftBoardContent === 'report' && reportFormVisible"></ReportForm>
 
 	</div>
 </template>
@@ -92,12 +83,28 @@
 
 	.search-box {
 		margin-bottom: 8px;
-		flex: 0 0 auto;
+	}
+
+	.search-box input{
+		flex: 1 1 auto;
 	}
 
 	.report-feeds {
 		flex: 1 1 auto;
 	}
+	.report-header{
+		margin-bottom:16px;
+		display: flex;
+		align-items: center;
+	}
+	.report-header-title{
+		flex:1 1 auto;
+	}
+	.report-header-buttons{
+		flex:0 0 auto;
+	}
+
+
 
 </style>
 <script>
@@ -111,12 +118,16 @@
 	import axe from '../Axios';
 	import UserStatus from './user/UserStatus';
 	import LoginForm from './user/LoginForm';
+	import CircleButton from '../components/input/CircleButton';
+	import Button from '../components/input/Button';
+	import ReportList from './report/ReportList';
 
 	export default {
-		components: { LoginForm, UserStatus, RegisterForm, ReportItem, TermsNotice, ReportForm, TextField, Board },
+		components: { ReportList, Button, CircleButton, LoginForm, UserStatus, RegisterForm, ReportItem, TermsNotice, ReportForm, TextField, Board },
 		data() {
 			return {
-				userMode: 'register'
+				userMode: 'register',
+				reportFormVisible: false
 			}
 		},
 		computed: {
@@ -136,6 +147,9 @@
 		methods: {
 			switchUserMode(mode) {
 				this.userMode = mode;
+			},
+			showReportForm(){
+				this.reportFormVisible = true;
 			}
 		},
 		mounted() {

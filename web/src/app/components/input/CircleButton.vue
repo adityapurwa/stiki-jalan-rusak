@@ -13,7 +13,7 @@
 
 <script>
 	export default {
-		name: 'Button',
+		name: 'CircleButton',
 		props: {
 			label: String,
 			name: String,
@@ -27,15 +27,16 @@
 
 <style scoped>
 	.circle-button {
-		border-radius: 4px;
+		border-radius: 360px;
 		background: #eee;
-		padding: 8px 12px;
+		padding: 8px 15px;
 		color: rgba(0, 0, 0, .75);
-		font-weight: var(--font-heavy);
-		font-size: 12px;
+		font-weight: var(--font-light);
+		font-size: 24px;
 		border: none;
 		transition: all var(--speed-fast) ease;
 		outline: none;
+		box-shadow: 0 2px 2px rgba(0, 0, 0, .25), 0 8px 18px rgba(0, 0, 0, .25);
 	}
 
 	.circle-button:hover, .circle-button:focus {

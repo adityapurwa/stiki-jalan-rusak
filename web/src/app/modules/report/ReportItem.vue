@@ -3,35 +3,49 @@
 		<div class="report-text">
 			<div class="report-meta">
 				<div class="report-author">
-					Aditya Purwa
+					{{ report.user_name }}
 				</div>
 				<time class="report-time">
-					March 24th, 2019 - 15.23
+					{{ report.created_at | date }}
 				</time>
 				<div class="report-support">
 					1.512 dukungan
 				</div>
 			</div>
 			<address class="report-address">
-				Jalan Jogja 51A, Kota Malang
+				{{ report.address }}
 			</address>
 			<div class="report-actions">
 				<Button type="button" name="report" label="Tandai Palsu"></Button>
 				<Button color="primary" type="button" name="report" label="Dukung"></Button>
 			</div>
 		</div>
-		<div class="report-image">
-		</div>
+		<img class="report-image" :src="getReportImageUrl" />
 	</li>
 </template>
 
 <script>
 	import Button from '../../components/input/Button';
+	import { API_URL } from '../../Axios';
 
 	export default {
 		name: 'ReportItem',
 		components: { Button },
-		props: {}
+		props: {
+			report: Object
+		},
+		computed: {
+			getReportImageUrl() {
+				return `http://${ API_URL }/storage/${ this.report.photo }.jpg`;
+			}
+		},
+		filters: {
+			date: function (val) {
+				const date = new Date(val);
+				const dateFormat = new Intl.DateTimeFormat('id-ID');
+				return `${ dateFormat.format(date) }, ${ date.getHours() }:${ date.getMinutes() }`;
+			}
+		}
 	}
 </script>
 
@@ -75,17 +89,19 @@
 		display: flex;
 	}
 
-	.report-actions .button {
+	.report-actions .circle-button {
 		flex: 1 1 50%;
 	}
 
-	.report-actions .button:first-child {
+	.report-actions .circle-button:first-child {
 		margin-right: 16px;
 	}
 
 	.report-image {
 		flex: 1 1 auto;
+		width: 0;
 		background: var(--body-bg);
-		height: auto;
+		height: 140px;
+		object-fit: cover;
 	}
 </style>
