@@ -4,12 +4,19 @@
 			<div v-if="disabled" class="disabler">
 				<Button type="button" name="login" label="Masuk Dengan Google Untuk Membuat Laporan" color="primary"></Button>
 			</div>
-			<TextField name="address" label="Alamat Jalan" v-model="address"></TextField>
-			<ImageField ld ref="photo" name="photo" label="Foto Kerusakan"></ImageField>
+			<TextField name="address" label="Alamat Jalan" v-model="address" :errors="errors.address"></TextField>
+			<ImageField ld ref="photo" name="photo" label="Foto Kerusakan" :errors="errors.photo"></ImageField>
 		</div>
 		<template v-slot:footer>
 			<div class="report-form-buttons">
-				<Button @click="handleSubmit" type="submit" name="submit" label="Simpan" color="primary"></Button>
+				<Button
+					@click="handleSubmit"
+					type="submit"
+					name="submit"
+					label="Simpan"
+					color="primary"
+					:loading="isLoading"
+				></Button>
 			</div>
 		</template>
 	</Modal>
@@ -32,18 +39,32 @@
 		data() {
 			return {
 				address: '',
+				errors: {},
 				isLoading: false
 			}
 		},
 		methods: {
 			handleSubmit() {
 				this.isLoading = true;
-				const photo = this.$refs.photo.getFiles()[0];
+				this.errors = {};
+				const photo = this.$refs.photo.getFiles() ? this.$refs.photo.getFiles()[0] : null;
+				if (!photo || photo.size / 1000 > 2000) {
+					this.isLoading = false;
+					this.errors = {
+						photo: {
+							size: 'Pastikan foto berformat JPG dan kurang dari 2MB'
+						}
+					};
+					return;
+				}
 				const formData = new FormData();
 				formData.append('address', this.address);
 				formData.append('photo', photo);
 				axe.post('create-report.php', formData)
 					.then(res => {
+						this.$emit('close');
+						window.$bus.$emit('toast', 'Laporan berhasil dibuat');
+						window.$bus.$emit('report-list.refresh');
 
 					})
 					.catch(err => {

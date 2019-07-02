@@ -63,6 +63,7 @@
 						user: res.data.user
 					});
 					this.$emit('close');
+					window.$bus.$emit('toast', 'Anda berhasil daftar dan secara otomatis masuk');
 				}).catch(err => {
 					if (err.response.status === 400) {
 						this.errors = err.response.data;

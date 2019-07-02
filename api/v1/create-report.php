@@ -1,32 +1,33 @@
 <?php
 require_once("../core/bootstrap.php");
 
+guard();
+
 use Rakit\Validation\Validator;
 
-global $db;
-global $_JSON;
-
-$address = $_POST['address'];
-$photo = $_FILES['photo'];
-$userId = $_SESSION[APP_SESSION_USER_ID];
-
-$validator = new Validator();
-$validation = $validator->make(
-	compact('address', 'photo'),
-	[
-		'address' => 'required',
-		'photo' => 'required'
-	]
-);
-
-$validation->validate();
-if ($validation->fails()) {
-	http_response_code(400);
-	echo json_encode($validation->errors()->toArray());
-	exit;
-}
-
 try {
+	global $db;
+	global $_JSON;
+
+	$address = isset($_POST['address']) ? $_POST['address'] : null;
+	$photo = isset($_FILES['photo']) ? $_FILES['photo'] : null;
+	$userId = $_SESSION[APP_SESSION_USER_ID];
+
+	$validator = new Validator();
+	$validation = $validator->make(
+		compact('address', 'photo'),
+		[
+			'address' => 'required',
+			'photo' => 'required'
+		]
+	);
+
+	$validation->validate();
+	if ($validation->fails()) {
+		http_response_code(400);
+		echo json_encode($validation->errors()->toArray());
+		exit;
+	}
 
 	$photoShaName = sha1_file($photo['tmp_name']);
 

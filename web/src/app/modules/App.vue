@@ -1,5 +1,6 @@
 <template>
 	<div class="app">
+		<Toast></Toast>
 		<header>
 			<h1>
 				Lapor Jalan Rusak
@@ -9,7 +10,7 @@
 		<main class="content">
 			<section class="main-board">
 				<div class="search-box">
-					<TextField name="search" label="Pencarian" :shadow="true" :borderless="true"></TextField>
+					<TextField @keypress.enter="refreshList" v-model="search" name="search" label="Pencarian" :shadow="true" :borderless="true"></TextField>
 				</div>
 				<div class="report-feeds">
 					<Board>
@@ -17,17 +18,21 @@
 							<h4 class="report-header-title">
 								Laporan Terkini
 							</h4>
-							<div class="report-header-buttons">
+							<div class="report-header-buttons" v-if="loggedIn">
 								<Button @click="showReportForm" label="Buat Laporan Baru" name="create" color="primary"></Button>
 							</div>
 						</header>
-						<ReportList></ReportList>
+						<ReportList :search="search"></ReportList>
 					</Board>
 				</div>
 			</section>
 		</main>
 
-		<ReportForm @close="reportFormVisible = false" :visible="reportFormVisible" v-if="getLeftBoardContent === 'report' && reportFormVisible"></ReportForm>
+		<ReportForm
+			@close="reportFormVisible = false"
+			:visible="reportFormVisible"
+			v-if="getLeftBoardContent === 'report' && reportFormVisible"
+		></ReportForm>
 
 	</div>
 </template>
@@ -85,26 +90,27 @@
 		margin-bottom: 8px;
 	}
 
-	.search-box input{
+	.search-box input {
 		flex: 1 1 auto;
 	}
 
 	.report-feeds {
 		flex: 1 1 auto;
 	}
-	.report-header{
-		margin-bottom:16px;
+
+	.report-header {
+		margin-bottom: 16px;
 		display: flex;
 		align-items: center;
 	}
-	.report-header-title{
-		flex:1 1 auto;
-	}
-	.report-header-buttons{
-		flex:0 0 auto;
+
+	.report-header-title {
+		flex: 1 1 auto;
 	}
 
-
+	.report-header-buttons {
+		flex: 0 0 auto;
+	}
 
 </style>
 <script>
@@ -121,13 +127,28 @@
 	import CircleButton from '../components/input/CircleButton';
 	import Button from '../components/input/Button';
 	import ReportList from './report/ReportList';
+	import Toast from '../components/notifications/Toast';
 
 	export default {
-		components: { ReportList, Button, CircleButton, LoginForm, UserStatus, RegisterForm, ReportItem, TermsNotice, ReportForm, TextField, Board },
+		components: {
+			Toast,
+			ReportList,
+			Button,
+			CircleButton,
+			LoginForm,
+			UserStatus,
+			RegisterForm,
+			ReportItem,
+			TermsNotice,
+			ReportForm,
+			TextField,
+			Board
+		},
 		data() {
 			return {
 				userMode: 'register',
-				reportFormVisible: false
+				reportFormVisible: false,
+				search: ''
 			}
 		},
 		computed: {
@@ -148,8 +169,11 @@
 			switchUserMode(mode) {
 				this.userMode = mode;
 			},
-			showReportForm(){
+			showReportForm() {
 				this.reportFormVisible = true;
+			},
+			refreshList() {
+				window.$bus.$emit('report-list.refresh');
 			}
 		},
 		mounted() {

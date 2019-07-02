@@ -3,6 +3,7 @@
 		<label :for="name" class="text-label">{{ label }}</label>
 		<label v-if="errors" v-for="error in errorsAsArray" :for="name" class="error-label">{{ error }}</label>
 		<input
+			@keypress="$emit('keypress', $event)"
 			:type="type" :name="name" class="text-input"
 			:class="{
 				'with-shadow': shadow,

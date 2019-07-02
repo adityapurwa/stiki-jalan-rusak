@@ -2,11 +2,11 @@
 	<button
 		@click="$emit('click')"
 		v-if="type !== 'link'"
-		class="circle-button" :class="{'primary': color === 'primary', 'loading': loading}" :type="type" :name="name"
+		class="button" :class="{'primary': color === 'primary', 'loading': loading}" :type="type" :name="name"
 		:disabled="loading"
 	>{{ label }}
 	</button>
-	<a v-else :href="href" class="circle-button" :class="{'primary': color === 'primary', 'loading': loading}">
+	<a v-else :href="href" class="button" :class="{'primary': color === 'primary', 'loading': loading}">
 		{{ label }}
 	</a>
 </template>
@@ -26,7 +26,7 @@
 </script>
 
 <style scoped>
-	.circle-button {
+	.button {
 		border-radius: 4px;
 		background: #eee;
 		padding: 8px 12px;
@@ -38,12 +38,12 @@
 		outline: none;
 	}
 
-	.circle-button:hover, .circle-button:focus {
+	.button:hover, .button:focus {
 		background: #ddd;
 		color: rgba(0, 0, 0, 0.95);
 	}
 
-	.circle-button:active {
+	.button:active {
 		background: #ccc;
 		color: rgba(0, 0, 0, 0.95);
 		transform: translateY(1px) scale(0.995);

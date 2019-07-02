@@ -36,6 +36,8 @@
 			logout() {
 				this.$store.commit('user/clearUser');
 				Cookies.remove('PHPSESSID');
+				window.$bus.$emit('toast', 'Anda berhasil keluar');
+				window.$bus.$emit('report-list.refresh');
 			},
 			showLogin() {
 				this.loginModal = true;

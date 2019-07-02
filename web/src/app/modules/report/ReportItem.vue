@@ -9,34 +9,85 @@
 					{{ report.created_at | date }}
 				</time>
 				<div class="report-support">
-					1.512 dukungan
+					{{ report.votes }} dukungan
+					<template v-if="report.my_vote === 'positive'">
+						- Anda mendukung laporan ini
+					</template>
+					<template v-if="report.my_vote === 'negative'">
+						- Anda melaporkan laporan ini sebagai palsu
+					</template>
 				</div>
 			</div>
 			<address class="report-address">
 				{{ report.address }}
 			</address>
-			<div class="report-actions">
-				<Button type="button" name="report" label="Tandai Palsu"></Button>
-				<Button color="primary" type="button" name="report" label="Dukung"></Button>
+			<div class="report-actions" v-if="isLoggedIn">
+				<Button
+					v-if="!report.my_vote"
+					@click="downvote"
+					:loading="isLoading"
+					type="button"
+					name="report"
+					label="Tandai Palsu"
+				></Button>
+				<Button
+					v-if="!report.my_vote"
+					@click="upvote"
+					:loading="isLoading"
+					color="primary"
+					type="button"
+					name="report"
+					label="Dukung"
+				></Button>
+				<Button
+					v-if="report.my_vote === 'positive'"
+					@click="clearvote(-1)"
+					:loading="isLoading"
+					type="button"
+					name="report"
+					label="Batalkan Dukungan"
+				></Button>
+				<Button
+					v-if="report.my_vote === 'negative'"
+					@click="clearvote(1)"
+					:loading="isLoading"
+					type="button"
+					name="report"
+					label="Batalkan Laporan Palsu"
+				></Button>
 			</div>
 		</div>
-		<img class="report-image" :src="getReportImageUrl" />
+		<img class="report-image" :src="getReportImageUrl" @click="imageZoomed = true" />
+		<Modal :title="report.address" :visible="imageZoomed" @close="imageZoomed = false">
+			<img class="report-image-zoomed" :src="getReportImageUrl" />
+		</Modal>
 	</li>
 </template>
 
 <script>
 	import Button from '../../components/input/Button';
 	import { API_URL } from '../../Axios';
+	import Modal from '../../components/layout/Modal';
+	import axe from '../../Axios';
 
 	export default {
 		name: 'ReportItem',
-		components: { Button },
+		components: { Modal, Button },
+		data() {
+			return {
+				imageZoomed: false,
+				isLoading: false,
+			}
+		},
 		props: {
 			report: Object
 		},
 		computed: {
 			getReportImageUrl() {
 				return `http://${ API_URL }/storage/${ this.report.photo }.jpg`;
+			},
+			isLoggedIn() {
+				return !!this.$store.state.user.user;
 			}
 		},
 		filters: {
@@ -44,6 +95,45 @@
 				const date = new Date(val);
 				const dateFormat = new Intl.DateTimeFormat('id-ID');
 				return `${ dateFormat.format(date) }, ${ date.getHours() }:${ date.getMinutes() }`;
+			}
+		},
+		methods: {
+			upvote() {
+				this.isLoading = true;
+				axe.post('upvote-report.php', {
+					report_id: this.report.id
+				}).then(res => {
+					this.report.my_vote = 'positive';
+					this.report.votes++;
+				}).catch(err => {
+
+				}).finally(() => {
+					this.isLoading = false;
+
+				});
+			},
+			downvote() {
+				axe.post('downvote-report.php', {
+					report_id: this.report.id
+				}).then(res => {
+					this.report.my_vote = 'negative';
+					this.report.votes--;
+				}).catch(err => {
+
+				}).finally(() => {
+					this.isLoading = false;
+				})
+			},
+			clearvote(delta) {
+				axe.post('clearvote-report.php', {
+					report_id: this.report.id
+				}).then(res => {
+					this.report.my_vote = null;
+					this.report.votes += delta;
+				}).catch(err => {
+				}).finally(() => {
+					this.isLoading = false;
+				})
 			}
 		}
 	}
@@ -89,11 +179,11 @@
 		display: flex;
 	}
 
-	.report-actions .circle-button {
+	.report-actions .button {
 		flex: 1 1 50%;
 	}
 
-	.report-actions .circle-button:first-child {
+	.report-actions .button:first-child {
 		margin-right: 16px;
 	}
 
@@ -103,5 +193,13 @@
 		background: var(--body-bg);
 		height: 140px;
 		object-fit: cover;
+	}
+
+	.report-image-zoomed {
+		width: 400px;
+		height: 400px;
+		object-fit: contain;
+		background: #555;
+		box-shadow: inset 0 8px 8px rgba(0, 0, 0, .25);
 	}
 </style>

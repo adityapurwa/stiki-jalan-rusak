@@ -38,7 +38,7 @@
 	export default {
 		name: 'LoginForm',
 		components: { Modal, DefaultAlert, ErrorAlert, Button, TextField },
-		props:{
+		props: {
 			visible: Boolean
 		},
 		data() {
@@ -63,6 +63,7 @@
 						user: res.data.user
 					});
 					this.$emit('close');
+					window.$bus.$emit('toast', 'Anda berhasil masuk');
 				}).catch(err => {
 					if (err.response.status === 400) {
 						this.errors = err.response.data;
