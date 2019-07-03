@@ -11,7 +11,7 @@ if (Cookies.get('PHPSESSID') !== undefined) {
 }
 
 const axe = Axios.create({
-	baseURL: `http://${ API_URL }/v1/`,
+	baseURL: `https://${ API_URL }/v1/`,
 	headers: headers,
 });
 axe.interceptors.request.use(conf => {
