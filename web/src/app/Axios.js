@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 
-export const API_URL = 'api.laporjalan.lrg';
+export const API_URL = '34.74.151.24';
 
 const headers = {
 	'Content-Type': 'application/json',

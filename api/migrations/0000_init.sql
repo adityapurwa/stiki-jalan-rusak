@@ -28,6 +28,7 @@ create table report_votes
     type      enum ('positive', 'negative') not null
 );
 
+DELIMITER ///
 CREATE TRIGGER update_report_cache_votes_on_insert
     AFTER INSERT
     ON report_votes
@@ -39,6 +40,8 @@ BEGIN
     SELECT COUNT(*) INTO @negativeCount FROM report_votes WHERE type = 'negative' AND report_id = NEW.report_id;
     UPDATE reports SET cache_votes = @positiveCount - @negativeCount WHERE reports.id = NEW.report_id;
 end;
+///
+DELIMITER ///
 CREATE TRIGGER update_report_cache_votes_on_update
     AFTER UPDATE
     ON report_votes
@@ -50,7 +53,8 @@ BEGIN
     SELECT COUNT(*) INTO @negativeCount FROM report_votes WHERE type = 'negative' AND report_id = NEW.report_id;
     UPDATE reports SET cache_votes = @positiveCount - @negativeCount WHERE reports.id = NEW.report_id;
 end;
-
+///
+DELIMITER ///
 CREATE TRIGGER update_report_cache_votes_on_delete
     AFTER DELETE
     ON report_votes
@@ -62,3 +66,4 @@ BEGIN
     SELECT COUNT(*) INTO @negativeCount FROM report_votes WHERE type = 'negative' AND report_id = OLD.report_id;
     UPDATE reports SET cache_votes = @positiveCount - @negativeCount WHERE reports.id = OLD.report_id;
 end;
+///
