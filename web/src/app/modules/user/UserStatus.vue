@@ -64,11 +64,11 @@
 		flex: 1 1 auto;
 	}
 
-	.user-status .circle-button {
+	.user-status .button {
 		flex: 1 1 auto;
 	}
 
-	.user-status .circle-button:first-child {
+	.user-status .button:first-child {
 		margin-right: 8px;
 	}
 

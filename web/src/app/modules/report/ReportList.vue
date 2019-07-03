@@ -3,7 +3,7 @@
 		<DefaultAlert v-if="isReportEmpty && !isLoading">
 			Belum ada laporan kerusakan jalan yang bisa ditampilkan
 		</DefaultAlert>
-		<LoadingIndicator v-if="!reports || reports.length <= 0" height="150px"></LoadingIndicator>
+		<LoadingIndicator v-if="!reports || reports.length <= 0 && isLoading" height="150px"></LoadingIndicator>
 		<ReportItem v-for="report in reports" :key="report.id" :report="report"></ReportItem>
 		<div class="list-buttons">
 			<Button
