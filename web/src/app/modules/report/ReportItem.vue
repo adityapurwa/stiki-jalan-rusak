@@ -113,6 +113,7 @@
 				});
 			},
 			downvote() {
+				this.isLoading = true;
 				axe.post('downvote-report.php', {
 					report_id: this.report.id
 				}).then(res => {
@@ -125,6 +126,7 @@
 				})
 			},
 			clearvote(delta) {
+				this.isLoading = true;
 				axe.post('clearvote-report.php', {
 					report_id: this.report.id
 				}).then(res => {
